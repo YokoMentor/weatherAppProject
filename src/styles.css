@@ -6,7 +6,7 @@ input {
     font-size: 20px;
     width: 270px;
     height: 30px;
-    border: 2px solid #000000;
+    border: 1px solid #000000;
     border-radius: 25px;
     color: #000000;
     padding-left: 20px;
@@ -20,20 +20,17 @@ h1 {
     color: #f9b80a;
 }
 
-.temperature-today {
-    font-size: 90px;
-    font-weight: 900;
-    margin: 0px;
-    color: #f9b80a;
-}
-
 a {
     text-decoration: none;
-    color: #f9b80a;
+    color: #ffffff;
 }
 
 a:hover {
-    color: #ffffff;
+    color: #f9b80a;
+}
+
+a:focus {
+    color: #f9b80a;
 }
 
 p {
@@ -69,11 +66,19 @@ p {
     margin-bottom: 30px;
 }
 
+.temperature-today {
+    font-size: 90px;
+    font-weight: 900;
+    margin: 0px;
+    color: #f9b80a;
+}
+
 .weather-condition {
     font-size: 30px;
     color: #f9b80a;
     margin-top: 0px;
     margin-bottom: 40px;
+    text-transform: capitalize;
 }
 
 .additional-information {

@@ -37,7 +37,7 @@ let cityName = "Berlin";
 let form = document.querySelector("#city-form");
 form.addEventListener("submit", city);
 
-let currentLocation = document.querySelector("#location");
+let currentLocation = document.querySelector("#locationId");
 currentLocation.addEventListener("click", searchUserLocation);
 
 let celsius = document.querySelector("#celsius-link");
@@ -80,8 +80,33 @@ function accessTemperature(cityInput, units) {
 }
 
 function displayWeather(response) {
+  displayTemperature(response);
+  displayDescription(response);
+  displayHumidity(response);
+  displayWind(response);
+}
+
+function displayTemperature(response) {
   let temperatureElement = Math.round(response.data.main.temp);
-  let temperature = document.querySelector("#temperatureId");
+  let temperature = document.querySelector(".temperature");
+  temperature.innerHTML = temperatureElement;
+}
+
+function displayDescription(response) {
+  let temperatureElement = response.data.weather[0].description;
+  let temperature = document.querySelector("#descriptionId");
+  temperature.innerHTML = temperatureElement;
+}
+
+function displayHumidity(response) {
+  let temperatureElement = Math.round(response.data.main.humidity);
+  let temperature = document.querySelector("#humidityId");
+  temperature.innerHTML = temperatureElement;
+}
+
+function displayWind(response) {
+  let temperatureElement = Math.round(response.data.wind.speed);
+  let temperature = document.querySelector("#windId");
   temperature.innerHTML = temperatureElement;
 }
 
