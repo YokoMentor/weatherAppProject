@@ -31,6 +31,7 @@ a:hover {
 
 a:focus {
     color: #f9b80a;
+    outline: none;
 }
 
 p {
@@ -54,7 +55,7 @@ p {
     color: #f9b80a;
 }
 
-.forecast-for-today{
+.forecast-for-today {
     display: flex;
     flex-direction: column;
     align-items: center;

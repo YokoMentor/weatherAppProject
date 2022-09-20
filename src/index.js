@@ -39,6 +39,7 @@ form.addEventListener("submit", city);
 
 let currentLocation = document.querySelector("#locationId");
 currentLocation.addEventListener("click", searchUserLocation);
+window.addEventListener("load", searchUserLocation);
 
 let celsius = document.querySelector("#celsius-link");
 celsius.addEventListener("click", convertToCelsius);
@@ -60,7 +61,9 @@ function city(event) {
 
   cityName = cityInput.value;
 
-  accessTemperature(cityInput.value, "metric");
+  accessTemperature(cityName, "metric");
+
+  cityInput.value = "";
 }
 
 function convertToCelsius(event) {
@@ -73,17 +76,23 @@ function convertToFahrenheit(event) {
   accessTemperature(cityName, "imperial");
 }
 
-function accessTemperature(cityInput, units) {
+function accessTemperature(city, units) {
   let apiKey = "b40b135798f82a05aed08769f9275f50";
-  let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${cityInput}&units=${units}&appid=${apiKey}`;
-  axios.get(apiUrl).then(displayWeather);
+  let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${units}&appid=${apiKey}`;
+  axios.get(apiUrl).then(function (response) {
+    displayWeather(response, units);
+  });
 }
 
-function displayWeather(response) {
+function displayWeather(response, units) {
   displayTemperature(response);
   displayDescription(response);
   displayHumidity(response);
-  displayWind(response);
+  displayRealFeel(response);
+
+  if (units == "metric") {
+    displayWind(response);
+  }
 }
 
 function displayTemperature(response) {
@@ -95,6 +104,12 @@ function displayTemperature(response) {
 function displayDescription(response) {
   let temperatureElement = response.data.weather[0].description;
   let temperature = document.querySelector("#descriptionId");
+  temperature.innerHTML = temperatureElement;
+}
+
+function displayRealFeel(response) {
+  let temperatureElement = Math.round(response.data.main.feels_like);
+  let temperature = document.querySelector("#realFeelId");
   temperature.innerHTML = temperatureElement;
 }
 
