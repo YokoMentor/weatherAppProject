@@ -89,6 +89,13 @@ function displayWeather(response, units) {
   displayDescription(response);
   displayHumidity(response);
   displayRealFeel(response);
+  accessSunny(response);
+  accessPartlyCloudy(response);
+  accessCloudy(response);
+  accessRainy(response);
+  accessThunder(response);
+  accessSnowy(response);
+  accessFoggy(response);
 
   if (units == "metric") {
     displayWind(response);
@@ -102,27 +109,27 @@ function displayTemperature(response) {
 }
 
 function displayDescription(response) {
-  let temperatureElement = response.data.weather[0].description;
-  let temperature = document.querySelector("#descriptionId");
-  temperature.innerHTML = temperatureElement;
+  let descriptionElement = response.data.weather[0].description;
+  let description = document.querySelector("#descriptionId");
+  description.innerHTML = descriptionElement;
 }
 
 function displayRealFeel(response) {
-  let temperatureElement = Math.round(response.data.main.feels_like);
-  let temperature = document.querySelector("#realFeelId");
-  temperature.innerHTML = temperatureElement;
+  let realFeelElement = Math.round(response.data.main.feels_like);
+  let realFeel = document.querySelector("#realFeelId");
+  realFeel.innerHTML = realFeelElement;
 }
 
 function displayHumidity(response) {
-  let temperatureElement = Math.round(response.data.main.humidity);
-  let temperature = document.querySelector("#humidityId");
-  temperature.innerHTML = temperatureElement;
+  let humidityElement = Math.round(response.data.main.humidity);
+  let humidity = document.querySelector("#humidityId");
+  humidity.innerHTML = humidityElement;
 }
 
 function displayWind(response) {
-  let temperatureElement = Math.round(response.data.wind.speed);
-  let temperature = document.querySelector("#windId");
-  temperature.innerHTML = temperatureElement;
+  let windElement = Math.round(response.data.wind.speed);
+  let wind = document.querySelector("#windId");
+  wind.innerHTML = windElement;
 }
 
 function searchUserLocation(event) {
@@ -148,4 +155,88 @@ function displayCityTemp(response) {
   accessTemperature(cityElement, "metric");
   let h1 = document.querySelector("h1");
   h1.innerHTML = `${cityElement.toUpperCase().trim()}`;
+}
+
+function accessSunny(response) {
+  let sunny = ["01d", "01n"];
+  if (sunny.includes(response.data.weather[0].icon)) {
+    displaySunIcon(response);
+  }
+}
+
+function accessPartlyCloudy(response) {
+  let partlyCloudy = ["02d", "02n"];
+  if (partlyCloudy.includes(response.data.weather[0].icon)) {
+    displayPartlyCloudyIcon();
+  }
+}
+
+function accessCloudy(response) {
+  let cloudy = ["03d", "03n", "04d", "04n"];
+  if (cloudy.includes(response.data.weather[0].icon)) {
+    displayCloudyIcon();
+  }
+}
+
+function accessRainy(response) {
+  let rainy = ["09d", "09n", "10d", "10n"];
+  if (rainy.includes(response.data.weather[0].icon)) {
+    displayRainIcon();
+  }
+}
+
+function accessThunder(response) {
+  let thunder = ["11d", "11n"];
+  if (thunder.includes(response.data.weather[0].icon)) {
+    displayThunderIcon();
+  }
+}
+
+function accessSnowy(response) {
+  let snowy = ["13d", "13n"];
+  if (snowy.includes(response.data.weather[0].icon)) {
+    displaySnowIcon();
+  }
+}
+
+function accessFoggy(response) {
+  let foggy = ["50d", "50n"];
+  if (foggy.includes(response.data.weather[0].icon)) {
+    displayFogIcon();
+  }
+}
+
+function displaySunIcon() {
+  var sunny = document.getElementById("weatherConditionId");
+  sunny.src = "images/sunny.svg";
+}
+
+function displayPartlyCloudyIcon() {
+  var partlyCloudy = document.getElementById("weatherConditionId");
+  partlyCloudy.src = "images/partly_cloudy.svg";
+}
+
+function displayCloudyIcon() {
+  var cloudy = document.getElementById("weatherConditionId");
+  cloudy.src = "images/cloudy.svg";
+}
+
+function displayRainIcon() {
+  var rainy = document.getElementById("weatherConditionId");
+  rainy.src = "images/rainy.svg";
+}
+
+function displayThunderIcon() {
+  var thunder = document.getElementById("weatherConditionId");
+  thunder.src = "images/stormy.svg";
+}
+
+function displaySnowIcon() {
+  var snowy = document.getElementById("weatherConditionId");
+  snowy.src = "images/snowy.svg";
+}
+
+function displayFogIcon() {
+  var foggy = document.getElementById("weatherConditionId");
+  foggy.src = "images/foggy.svg";
 }
