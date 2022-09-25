@@ -90,7 +90,7 @@ p {
     margin-bottom: 20px;
 }
 
-.extended-forecast {
+.forecast {
     font-size: 20px;
     font-weight: 700;
     color: #ffffff;
@@ -101,7 +101,7 @@ p {
     text-align: center;
 }
 
-.forecast-highlight {
+.highlight-style {
     color: #f9b80a;
 }
 

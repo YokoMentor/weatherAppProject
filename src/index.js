@@ -77,10 +77,13 @@ function convertToFahrenheit(event) {
 }
 
 function accessTemperature(city, units) {
+  console.log("accessTemperature");
   let apiKey = "b40b135798f82a05aed08769f9275f50";
   let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${units}&appid=${apiKey}`;
   axios.get(apiUrl).then(function (response) {
     displayWeather(response, units);
+    console.log("accessTemperature", response);
+    getForecast(response.data.coord.lat, response.data.coord.lon, units);
   });
 }
 
@@ -89,17 +92,21 @@ function displayWeather(response, units) {
   displayDescription(response);
   displayHumidity(response);
   displayRealFeel(response);
-  accessSunny(response);
-  accessPartlyCloudy(response);
-  accessCloudy(response);
-  accessRainy(response);
-  accessThunder(response);
-  accessSnowy(response);
-  accessFoggy(response);
+  displayForecastIcon(response.data.weather[0].icon, "weatherConditionId");
 
   if (units == "metric") {
     displayWind(response);
   }
+}
+
+function displayForecastIcon(response, id) {
+  accessSunny(response, id);
+  accessPartlyCloudy(response, id);
+  accessCloudy(response, id);
+  accessRainy(response, id);
+  accessThunder(response, id);
+  accessSnowy(response, id);
+  accessFoggy(response, id);
 }
 
 function displayTemperature(response) {
@@ -141,6 +148,7 @@ function showPosition(position) {
   let latitude = position.coords.latitude;
   let longitude = position.coords.longitude;
   accessLocationCity(latitude, longitude);
+  getForecast(latitude, longitude);
 }
 
 function accessLocationCity(latitude, longitude) {
@@ -157,86 +165,149 @@ function displayCityTemp(response) {
   h1.innerHTML = `${cityElement.toUpperCase().trim()}`;
 }
 
-function accessSunny(response) {
+function accessSunny(response, id) {
   let sunny = ["01d", "01n"];
-  if (sunny.includes(response.data.weather[0].icon)) {
-    displaySunIcon(response);
+  if (sunny.includes(response)) {
+    displaySunIcon(id);
   }
 }
 
-function accessPartlyCloudy(response) {
+function accessPartlyCloudy(response, id) {
   let partlyCloudy = ["02d", "02n"];
-  if (partlyCloudy.includes(response.data.weather[0].icon)) {
-    displayPartlyCloudyIcon();
+  if (partlyCloudy.includes(response)) {
+    displayPartlyCloudyIcon(id);
   }
 }
 
-function accessCloudy(response) {
+function accessCloudy(response, id) {
   let cloudy = ["03d", "03n", "04d", "04n"];
-  if (cloudy.includes(response.data.weather[0].icon)) {
-    displayCloudyIcon();
+  if (cloudy.includes(response)) {
+    displayCloudyIcon(id);
   }
 }
 
-function accessRainy(response) {
+function accessRainy(response, id) {
   let rainy = ["09d", "09n", "10d", "10n"];
-  if (rainy.includes(response.data.weather[0].icon)) {
-    displayRainIcon();
+  if (rainy.includes(response)) {
+    displayRainIcon(id);
   }
 }
 
-function accessThunder(response) {
+function accessThunder(response, id) {
   let thunder = ["11d", "11n"];
-  if (thunder.includes(response.data.weather[0].icon)) {
-    displayThunderIcon();
+  if (thunder.includes(response)) {
+    displayThunderIcon(id);
   }
 }
 
-function accessSnowy(response) {
+function accessSnowy(response, id) {
   let snowy = ["13d", "13n"];
-  if (snowy.includes(response.data.weather[0].icon)) {
-    displaySnowIcon();
+  if (snowy.includes(response)) {
+    displaySnowIcon(id);
   }
 }
 
-function accessFoggy(response) {
+function accessFoggy(response, id) {
   let foggy = ["50d", "50n"];
-  if (foggy.includes(response.data.weather[0].icon)) {
-    displayFogIcon();
+  if (foggy.includes(response)) {
+    displayFogIcon(id);
   }
 }
 
-function displaySunIcon() {
-  var sunny = document.getElementById("weatherConditionId");
+function displaySunIcon(id) {
+  var sunny = document.getElementById(id);
   sunny.src = "images/sunny.svg";
 }
 
-function displayPartlyCloudyIcon() {
-  var partlyCloudy = document.getElementById("weatherConditionId");
+function displayPartlyCloudyIcon(id) {
+  var partlyCloudy = document.getElementById(id);
   partlyCloudy.src = "images/partly_cloudy.svg";
 }
 
-function displayCloudyIcon() {
-  var cloudy = document.getElementById("weatherConditionId");
+function displayCloudyIcon(id) {
+  console.log(id);
+  var cloudy = document.getElementById(id);
   cloudy.src = "images/cloudy.svg";
 }
 
-function displayRainIcon() {
-  var rainy = document.getElementById("weatherConditionId");
+function displayRainIcon(id) {
+  var rainy = document.getElementById(id);
   rainy.src = "images/rainy.svg";
 }
 
-function displayThunderIcon() {
-  var thunder = document.getElementById("weatherConditionId");
+function displayThunderIcon(id) {
+  var thunder = document.getElementById(id);
   thunder.src = "images/stormy.svg";
 }
 
-function displaySnowIcon() {
-  var snowy = document.getElementById("weatherConditionId");
+function displaySnowIcon(id) {
+  var snowy = document.getElementById(id);
   snowy.src = "images/snowy.svg";
 }
 
-function displayFogIcon() {
-  var foggy = document.getElementById("weatherConditionId");
+function displayFogIcon(id) {
+  var foggy = document.getElementById(id);
   foggy.src = "images/foggy.svg";
+}
+
+function displayForecast(response) {
+  let forecast = response.data.daily;
+
+  let forecastElement = document.querySelector("#forecastId");
+
+  let forecastHTML = "";
+
+  forecast.forEach(function (forecastDay, index) {
+    if (index < 6 && index > 0) {
+      console.log(forecastDay);
+      forecastHTML =
+        forecastHTML +
+        `<div>
+        <div class="highlight-style" class="forecast-date">${formatDay(
+          forecastDay.dt
+        )}</div>
+          <img
+            src=""
+            name=${forecastDay.weather[0].icon}
+            alt="Forecast"
+            style="max-width: 60px"
+            id ="daily_${index}"
+            class="forecast-icon daily_icon"
+          />
+          <div>
+            <strong class="highlight-style"
+              ><span class="max-temp">${Math.round(
+                forecastDay.temp.max
+              )}</span>°</strong
+            >
+            <span class="min-temp">${Math.round(forecastDay.temp.min)}</span>°
+        </div>
+      </div>`;
+    }
+  });
+
+  forecastElement.innerHTML = forecastHTML;
+
+  let dailyIcons = document.getElementsByClassName("daily_icon");
+
+  for (let index = 0; index < dailyIcons.length; index++) {
+    let iconElement = dailyIcons[index];
+    console.log(iconElement);
+    displayForecastIcon(iconElement.name, iconElement.id);
+  }
+}
+
+function getForecast(latitude, longitude, units) {
+  let apiKey = "b40b135798f82a05aed08769f9275f50";
+  let apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=current,minutely,hourly,alerts&units=${units}&appid=${apiKey}`;
+  axios.get(apiUrl).then(displayForecast);
+}
+
+function formatDay(timestamp) {
+  let date = new Date(timestamp * 1000);
+  let day = date.getDay();
+  console.log(day);
+  let days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+
+  return days[day];
 }
