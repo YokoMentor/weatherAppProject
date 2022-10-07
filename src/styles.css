@@ -14,7 +14,7 @@ input {
 }
 
 h1 {
-    font-size: 60px;
+    font-size: 45px;
     font-weight: 700;
     margin-bottom: 10px;
     color: #f9b80a;
@@ -64,18 +64,18 @@ p {
 .date {
     color: #ffffff;
     margin-top: 0px;
-    margin-bottom: 30px;
+    margin-bottom: 0px;
 }
 
 .temperature-today {
-    font-size: 90px;
+    font-size: 60px;
     font-weight: 900;
     margin: 0px;
     color: #f9b80a;
 }
 
 .weather-condition {
-    font-size: 30px;
+    font-size: 20px;
     color: #f9b80a;
     margin-top: 0px;
     margin-bottom: 40px;
