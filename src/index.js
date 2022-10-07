@@ -34,36 +34,50 @@ paragraph.innerHTML = `${day} ${date} ${month}`;
 
 let cityName = "Berlin";
 
-let form = document.querySelector("#city-form");
-form.addEventListener("submit", city);
+createEventListeners();
 
-let currentLocation = document.querySelector("#locationId");
-currentLocation.addEventListener("click", searchUserLocation);
-window.addEventListener("load", searchUserLocation);
+function createEventListeners() {
+  let form = document.querySelector("#city-form");
+  form.addEventListener("submit", city);
 
-let celsius = document.querySelector("#celsius-link");
-celsius.addEventListener("click", convertToCelsius);
+  let currentLocation = document.querySelector("#locationId");
+  currentLocation.addEventListener("click", searchUserLocation);
+  window.addEventListener("load", searchUserLocation);
 
-let fahrenheit = document.querySelector("#fahrenheit-link");
-fahrenheit.addEventListener("click", convertToFahrenheit);
+  let celsius = document.querySelector("#celsius-link");
+  celsius.addEventListener("click", convertToCelsius);
+
+  let fahrenheit = document.querySelector("#fahrenheit-link");
+  fahrenheit.addEventListener("click", convertToFahrenheit);
+}
 
 function city(event) {
-  let cityInput = document.querySelector("#city-input");
-  let h1 = document.querySelector("h1");
-
-  if (cityInput.value) {
-    h1.innerHTML = `${cityInput.value.toUpperCase().trim()}`;
-  } else {
-    h1.innerHTML = null;
-    alert("⛔ Please type a city name!");
-  }
   event.preventDefault();
 
-  cityName = cityInput.value;
+  let cityInput = document.querySelector("#city-input");
+
+  displayCityName(cityInput);
+
+  cacheCityName(cityInput);
 
   accessTemperature(cityName, "metric");
 
   cityInput.value = "";
+}
+
+function displayCityName(input) {
+  let h1 = document.querySelector("h1");
+
+  if (input.value) {
+    h1.innerHTML = `${input.value.toUpperCase().trim()}`;
+  } else {
+    h1.innerHTML = null;
+    alert("⛔ Please type a city name!");
+  }
+}
+
+function cacheCityName(input) {
+  cityName = input.value;
 }
 
 function convertToCelsius(event) {
@@ -168,86 +182,55 @@ function displayCityTemp(response) {
 function accessSunny(response, id) {
   let sunny = ["01d", "01n"];
   if (sunny.includes(response)) {
-    displaySunIcon(id);
+    displayIcon(id, "images/sunny.svg");
   }
 }
 
 function accessPartlyCloudy(response, id) {
   let partlyCloudy = ["02d", "02n"];
   if (partlyCloudy.includes(response)) {
-    displayPartlyCloudyIcon(id);
+    displayIcon(id, "images/partly_cloudy.svg");
   }
 }
 
 function accessCloudy(response, id) {
   let cloudy = ["03d", "03n", "04d", "04n"];
   if (cloudy.includes(response)) {
-    displayCloudyIcon(id);
+    displayIcon(id, "images/cloudy.svg");
   }
 }
 
 function accessRainy(response, id) {
   let rainy = ["09d", "09n", "10d", "10n"];
   if (rainy.includes(response)) {
-    displayRainIcon(id);
+    displayIcon(id, "images/rainy.svg");
   }
 }
 
 function accessThunder(response, id) {
   let thunder = ["11d", "11n"];
   if (thunder.includes(response)) {
-    displayThunderIcon(id);
+    displayIcon(id, "images/stormy.svg");
   }
 }
 
 function accessSnowy(response, id) {
   let snowy = ["13d", "13n"];
   if (snowy.includes(response)) {
-    displaySnowIcon(id);
+    displayIcon(id, "images/snowy.svg");
   }
 }
 
 function accessFoggy(response, id) {
   let foggy = ["50d", "50n"];
   if (foggy.includes(response)) {
-    displayFogIcon(id);
+    displayIcon(id, "images/foggy.svg");
   }
 }
 
-function displaySunIcon(id) {
-  var sunny = document.getElementById(id);
-  sunny.src = "images/sunny.svg";
-}
-
-function displayPartlyCloudyIcon(id) {
-  var partlyCloudy = document.getElementById(id);
-  partlyCloudy.src = "images/partly_cloudy.svg";
-}
-
-function displayCloudyIcon(id) {
-  console.log(id);
-  var cloudy = document.getElementById(id);
-  cloudy.src = "images/cloudy.svg";
-}
-
-function displayRainIcon(id) {
-  var rainy = document.getElementById(id);
-  rainy.src = "images/rainy.svg";
-}
-
-function displayThunderIcon(id) {
-  var thunder = document.getElementById(id);
-  thunder.src = "images/stormy.svg";
-}
-
-function displaySnowIcon(id) {
-  var snowy = document.getElementById(id);
-  snowy.src = "images/snowy.svg";
-}
-
-function displayFogIcon(id) {
-  var foggy = document.getElementById(id);
-  foggy.src = "images/foggy.svg";
+function displayIcon(id, source) {
+  var icon = document.getElementById(id);
+  icon.src = source;
 }
 
 function displayForecast(response) {
@@ -260,17 +243,31 @@ function displayForecast(response) {
   forecast.forEach(function (forecastDay, index) {
     if (index < 6 && index > 0) {
       console.log(forecastDay);
-      forecastHTML =
-        forecastHTML +
-        `<div>
+      forecastHTML = forecastHTML + createForcastElement(forecastDay, index);
+    }
+  });
+
+  forecastElement.innerHTML = forecastHTML;
+
+  updateForecastIconsAfterLoading();
+}
+
+function getForecast(latitude, longitude, units) {
+  let apiKey = "b40b135798f82a05aed08769f9275f50";
+  let apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=current,minutely,hourly,alerts&units=${units}&appid=${apiKey}`;
+  axios.get(apiUrl).then(displayForecast);
+}
+
+function createForcastElement(forecastDay, index) {
+  return `<div>
         <div class="highlight-style" class="forecast-date">${formatDay(
           forecastDay.dt
         )}</div>
           <img
             src=""
-            name=${forecastDay.weather[0].icon}
+            data-weather-icon=${forecastDay.weather[0].icon}
             alt="Forecast"
-            style="max-width: 60px"
+            style="width: 60px"
             id ="daily_${index}"
             class="forecast-icon daily_icon"
           />
@@ -283,24 +280,15 @@ function displayForecast(response) {
             <span class="min-temp">${Math.round(forecastDay.temp.min)}</span>°
         </div>
       </div>`;
-    }
-  });
+}
 
-  forecastElement.innerHTML = forecastHTML;
-
+function updateForecastIconsAfterLoading() {
   let dailyIcons = document.getElementsByClassName("daily_icon");
 
   for (let index = 0; index < dailyIcons.length; index++) {
     let iconElement = dailyIcons[index];
-    console.log(iconElement);
-    displayForecastIcon(iconElement.name, iconElement.id);
+    displayForecastIcon(iconElement.dataset.weatherIcon, iconElement.id);
   }
-}
-
-function getForecast(latitude, longitude, units) {
-  let apiKey = "b40b135798f82a05aed08769f9275f50";
-  let apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=current,minutely,hourly,alerts&units=${units}&appid=${apiKey}`;
-  axios.get(apiUrl).then(displayForecast);
 }
 
 function formatDay(timestamp) {
